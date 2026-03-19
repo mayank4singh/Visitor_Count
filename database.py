@@ -34,6 +34,20 @@ def get_total(username):
     conn.close()
     return total
 
+def get_first_visit_date(username):
+    conn = sqlite3.connect(DB)
+    c = conn.cursor()
+    c.execute(
+        "SELECT MIN(visited_at) FROM visits WHERE username = ?",
+        (username,)
+    )
+    row = c.fetchone()
+    conn.close()
+    if row and row[0]:
+        dt = datetime.fromisoformat(row[0])
+        return dt.strftime("%b %d, %Y")
+    return "Today"
+
 def get_daily_counts(username, days=7):
     conn = sqlite3.connect(DB)
     c = conn.cursor()
