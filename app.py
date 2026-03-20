@@ -7,14 +7,22 @@ init_db()
 
 @app.route("/count/<username>")
 def count(username):
-    agent = request.headers.get("User-Agent", "")
-    if "camo" not in agent.lower():
+    agent = request.headers.get("User-Agent", "").lower()
+
+    # GitHub's camo proxy IS the real visit signal
+    # When camo fetches this image, a real human just loaded your profile
+    # Everything else (curl, bots, GitHub Actions) should be ignored
+    skip = ["curl", "python", "github-action", "bot", "spider", "crawler"]
+    is_skip = any(s in agent for s in skip)
+
+    if not is_skip:
+        # This includes camo requests — they are real visits
         record_visit(username)
 
-    total      = get_total(username)
-    daily      = get_daily_counts(username, days=7)
-    first_date = get_first_visit_date(username)
-    svg        = build_svg(total, daily, first_date)
+    total = get_total(username)
+    daily = get_daily_counts(username, days=7)
+    first = get_first_visit_date(username)
+    svg   = build_svg(total, daily, first)
 
     return Response(
         svg,
@@ -26,21 +34,6 @@ def count(username):
             "s-maxage":      "1",
         }
     )
-
-@app.route("/api/<username>")
-def api(username):
-    from flask import jsonify
-    from datetime import date
-    total      = get_total(username)
-    first_date = get_first_visit_date(username)
-    today      = date.today().strftime("%b %d, %Y")
-    return jsonify({
-        "username"  : username,
-        "total"     : total,
-        "since"     : first_date,
-        "today"     : today,
-        "date_range": f"{first_date} -> {today}"
-    })
 
 @app.route("/health")
 def health():
