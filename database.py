@@ -71,11 +71,4 @@ def get_daily_counts(username, days=7):
         day = (date.today() - timedelta(days=i)).isoformat()
         result.append(counts.get(day, 0))
     return result
-```
 
-**Key changes from the old file:**
-```
-sqlite3.connect("counter.db")  →  psycopg2.connect(DATABASE_URL)
-?  placeholders                →  %s placeholders
-datetime.isoformat()           →  works the same
-DATE('now', ?)                 →  NOW() - INTERVAL '%s days'
