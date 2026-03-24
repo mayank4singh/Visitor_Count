@@ -232,49 +232,6 @@ Takes total count, daily counts array, and first visit date as inputs. Computes 
 
 ---
 
-## Self Hosting Guide
-
-### 1. Clone the repo
-```bash
-git clone https://github.com/mayank4singh/Github_profile_Visitor_Count
-cd Github_profile_Visitor_Count
-```
-
-### 2. Install dependencies
-```bash
-pip install -r requirements.txt
-```
-
-### 3. Setup Supabase
-- Create a project at [supabase.com](https://supabase.com)
-- Run this in the **SQL Editor**:
-```sql
-CREATE TABLE IF NOT EXISTS visits (
-  id          SERIAL PRIMARY KEY,
-  username    TEXT NOT NULL,
-  visited_at  TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-```
-- Go to **Connect → Transaction pooler**
-- Enable **"Use IPv4 connection (Shared Pooler)"**
-- Copy the connection string and replace `[YOUR-PASSWORD]` with your actual password
-
-### 4. Deploy to Render
-- Create a new **Web Service** on [render.com](https://render.com)
-- Connect your GitHub repo
-- Add environment variable:
-```
-DATABASE_URL = your_supabase_transaction_pooler_url
-```
-- Deploy
-
-### 5. Add to your README
-```markdown
-![Visitor Count](https://your-render-url/count/YOUR_GITHUB_USERNAME)
-```
-
----
-
 ## Customization — Fork and Modify
 
 Fork this repo if you want to run your own instance or change the badge design.
